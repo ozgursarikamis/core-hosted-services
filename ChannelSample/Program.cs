@@ -6,9 +6,32 @@ namespace ChannelSample
 {
     internal class Program
     {
-        private static void Main()
+        private static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Which sample do you want to run?");
+            Console.WriteLine("1. Single producer, single consumer");
+            Console.WriteLine("2. Multiple producers, single consumer");
+            Console.WriteLine("3. Single producer, multiple consumers");
+            var key = Console.ReadKey();
+
+            switch (key.KeyChar)
+            {
+                case '1':
+                    await SingleProducerSingleConsumer();
+                    break;
+
+                case '2':
+                    await MultiProducerSingleConsumer();
+                    break;
+
+                case '3':
+                    await SingleProduceMultipleConsumers();
+                    break;
+
+                default:
+                    Console.WriteLine("That was an invalid choice!");
+                    break;
+            } 
         }
 
         public static async Task SingleProducerSingleConsumer()
