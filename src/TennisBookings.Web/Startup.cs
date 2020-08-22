@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using TennisBookings.ResultsProcessing;
 using Amazon.S3;
+using TennisBookings.Web.BackgroundServices;
+using TennisBookings.Web.Core;
 
 namespace TennisBookings.Web
 {
@@ -74,6 +76,9 @@ namespace TennisBookings.Web
             services.AddTennisPlayerApiClient(options => options.BaseAddress = Configuration.GetSection("ExternalServices:TennisPlayersApi")["Url"]);
             services.AddStatisticsApiClient(options => options.BaseAddress = Configuration.GetSection("ExternalServices:StatisticsApi")["Url"]);
             services.AddResultProcessing();
+
+            if (Configuration.IsWeatherForecastEnabled())
+                services.AddHostedService<WeatherCacheService>();
            
             services.AddControllersWithViews();
             services.AddRazorPages(options =>
