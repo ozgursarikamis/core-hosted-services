@@ -55,5 +55,16 @@ namespace TennisBookings.Web.BackgroundServices
                 await Task.Delay(TimeSpan.FromSeconds(_refreshIntervalInSeconds), stoppingToken);
             }
         }
+        // triggered when the application host is ready to start the service:
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            return base.StartAsync(cancellationToken);
+        }
+
+        // works when application is shutting down:
+        public override Task StopAsync(CancellationToken cancellationToken)
+        {
+            return base.StopAsync(cancellationToken);
+        }
     }
 }
