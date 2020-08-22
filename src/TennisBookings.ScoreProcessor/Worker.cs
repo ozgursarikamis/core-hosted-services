@@ -17,10 +17,25 @@ namespace TennisBookings.ScoreProcessor
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(1000, stoppingToken);
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    await Task.Delay(1000, stoppingToken);
+                }
+            }
+            catch (OperationCanceledException e)
+            {
+                _logger.LogError("OperationCanceledException");
+            }
+            catch (Exception e)
+            {
+                _logger.LogCritical(e, "unhandled exception was thrown");
+            }
+            finally
+            {
+                // do something
             }
         }
     }
