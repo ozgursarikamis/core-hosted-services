@@ -52,5 +52,26 @@ namespace ChannelSample
 
             await consumerTask1;
         }
+
+        public static async Task SingleProduceMultipleConsumers()
+        {
+            var channel = Channel.CreateUnbounded<string>();
+            // In this example, multiple consumers are needed to keep up with a fast producer
+
+            var producer1 = new Producer(channel.Writer, 1, 100);
+            var consumer1 = new Consumer(channel.Reader, 1, 1500);
+            var consumer2 = new Consumer(channel.Reader, 2, 1500);
+            var consumer3 = new Consumer(channel.Reader, 3, 1500);
+
+            Task consumerTask1 = consumer1.ConsumeData();
+            Task consumerTask2 = consumer2.ConsumeData();
+            Task consumerTask3 = consumer3.ConsumeData();
+
+            Task producerTask1 = producer1.BeginProducing();
+
+            await producerTask1.ContinueWith(_ => channel.Writer.Complete());
+
+            await Task.WhenAll(consumerTask1, consumerTask2, consumerTask3);
+        }
     }
 }
