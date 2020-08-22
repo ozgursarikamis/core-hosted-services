@@ -75,11 +75,15 @@ namespace TennisBookings.Web
 
             services.AddTennisPlayerApiClient(options => options.BaseAddress = Configuration.GetSection("ExternalServices:TennisPlayersApi")["Url"]);
             services.AddStatisticsApiClient(options => options.BaseAddress = Configuration.GetSection("ExternalServices:StatisticsApi")["Url"]);
-            services.AddResultProcessing();
+            services.AddResultProcessing(); 
+
+            services.AddSingleton<FileProcessingChannel>();
 
             if (Configuration.IsWeatherForecastEnabled())
                 services.AddHostedService<WeatherCacheService>();
-           
+
+            services.AddHostedService<FileProcessingService>();
+
             services.AddControllersWithViews();
             services.AddRazorPages(options =>
             {
