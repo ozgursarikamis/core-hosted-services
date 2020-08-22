@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,6 +63,19 @@ namespace TennisBookings.Web.BackgroundServices
                     File.Delete(fileName); // Delete the temp file
                 }
             }
+        }
+
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            return base.StartAsync(cancellationToken);
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            var sw = Stopwatch.StartNew();
+            await base.StopAsync(cancellationToken);
+
+            _logger.LogInformation("completed shutdown in {Milliseconds} ms", sw.ElapsedMilliseconds);
         }
     }
 }
