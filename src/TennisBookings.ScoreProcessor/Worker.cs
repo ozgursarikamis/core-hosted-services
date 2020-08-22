@@ -9,16 +9,23 @@ namespace TennisBookings.ScoreProcessor
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private readonly IHostApplicationLifetime _hostApplication;
 
-        public Worker(ILogger<Worker> logger)
+        public Worker(ILogger<Worker> logger, IHostApplicationLifetime hostApplication)
         {
             _logger = logger;
+            _hostApplication = hostApplication;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            stoppingToken.Register(() =>
+            {
+                _logger.LogInformation("Ending score processing service");
+            });
             try
             {
+                throw new InvalidOperationException("IOE");
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
@@ -27,7 +34,7 @@ namespace TennisBookings.ScoreProcessor
             }
             catch (OperationCanceledException e)
             {
-                _logger.LogError("OperationCanceledException");
+                _logger.LogError(e, "OperationCanceledException");
             }
             catch (Exception e)
             {
@@ -36,6 +43,7 @@ namespace TennisBookings.ScoreProcessor
             finally
             {
                 // do something
+                _hostApplication.StopApplication();
             }
         }
     }
