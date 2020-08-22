@@ -47,6 +47,14 @@ namespace TennisBookings.Web.BackgroundServices
         public static void ProcessedMessage(ILogger logger, string messageId) => _processedMessage(logger, messageId, null);
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await Task.Yield();
+            /*
+             * using await Task.Yield() will force your method to be asynchronous,
+             * and return control at that point.
+             *
+             * The rest of the code will execute at a later time
+             * (at which point, it still may run synchronously) on the current context.
+             */
             await foreach (var fileName in _fileProcessingChannel.ReadAllAsync(stoppingToken))
             {
                 using var scope = _serviceProvider.CreateScope();
